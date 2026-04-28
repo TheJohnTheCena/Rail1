@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RailOne Dummy App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #F9FBFF;
+            --primary-blue: #0066FF;
+            --header-blue: #0061FF;
+            --text-grey: #757575;
+            --border-light: #C0E0FF;
+            --no-icon-bg: #FFF2F2;
+            --ticket-orange: #f9a825;
+            --ticket-green: #4caf50;
+        }
+
+        body { font-family: 'Inter', sans-serif; margin: 0; padding: 0; background-color: var(--bg-color); -webkit-font-smoothing: antialiased; }
+        .screen { height: 100vh; width: 100%; display: none; flex-direction: column; box-sizing: border-box; }
+        .active { display: flex; }
+
+        /* PAGE 1 & 2 - LOCKED */
+        .p-24 { padding: 24px; }
+        .logo-area { text-align: center; margin-top: 40px; }
+        .logo-img { height: 40px; }
+        .login-header { text-align: center; margin-top: 60px; }
+        .login-header h2 { font-weight: 700; font-size: 22px; color: #333; margin-bottom: 8px; }
+        .login-header p { color: var(--text-grey); font-size: 15px; margin: 4px 0; }
+        .pin-container { display: flex; justify-content: space-between; margin-top: 25px; }
+        .pin-box { width: 45px; height: 50px; border: 1px solid var(--border-light); border-radius: 8px; background: white; text-align: center; font-size: 24px; font-weight: bold; }
+        .links-row { display: flex; justify-content: space-between; margin-top: 15px; }
+        .links-row a { text-decoration: none; color: #003366; font-weight: 600; font-size: 13px; }
+        .divider { display: flex; align-items: center; text-align: center; margin: 50px 0; color: var(--text-grey); font-size: 13px; }
+        .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px dashed #ccc; }
+        .divider:not(:empty)::before { margin-right: .5em; }
+        .divider:not(:empty)::after { margin-left: .5em; }
+        .biometric-row { display: flex; justify-content: space-between; align-items: center; }
+        .bio-icons img { height: 35px; margin-right: 15px; }
+        .btn-login { border: 1px solid var(--primary-blue); background: #F0F7FF; color: var(--primary-blue); padding: 10px 30px; border-radius: 25px; font-weight: 600; cursor: pointer; }
+        .different-user { text-align: center; margin-top: 80px; color: #003366; font-weight: 700; cursor: pointer; }
+        
+        .page-no-internet { background-color: white; justify-content: center; text-align: center; }
+        .icon-box { background-color: var(--no-icon-bg); width: 120px; height: 120px; border-radius: 25px; margin: 0 auto 30px auto; display: flex; align-items: center; justify-content: center; }
+        .wifi-icon-img { width: 80px; height: auto; }
+        .no-internet-title { font-size: 24px; font-weight: 800; margin-bottom: 10px; }
+        .no-internet-sub { color: var(--text-grey); line-height: 1.5; margin-bottom: 40px; }
+        .btn-blue { background-color: var(--primary-blue); color: white; border: none; width: 100%; padding: 15px; border-radius: 30px; font-weight: 600; font-size: 16px; margin-bottom: 15px; cursor: pointer; }
+        
+        /* Updated Page 2 Button Icon Style */
+        .btn-outline { background: white; border: 1px solid var(--primary-blue); color: var(--primary-blue); width: 100%; padding: 15px; border-radius: 30px; font-weight: 600; font-size: 16px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .my-bookings-icon { height: 20px; width: auto; margin-right: 10px; }
+
+        /* PAGE 3 - STYLES (LOCKED) */
+        .header-blue { background-color: var(--header-blue); padding: 12px 18px; color: white; display: flex; align-items: center; justify-content: space-between; }
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .back-circle { width: 36px; height: 36px; border: 2px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 22px; line-height: 1; padding-right: 2px; }
+        .header-title { font-size: 19px; font-weight: 500; letter-spacing: 0.3px; }
+        .sort-icon { height: 26px; width: auto; cursor: pointer; }
+        .section-label { text-align: center; font-weight: 700; padding: 22px 0; display: flex; justify-content: center; align-items: center; gap: 8px; position: relative; font-size: 15px; }
+        .refresh-icon { height: 20px; width: auto; position: absolute; right: 20px; cursor: pointer; }
+        .scroll-area { flex: 1; overflow-y: auto; padding: 0 15px 20px 15px; }
+        .ticket-card { background: white; border-radius: 16px; margin-bottom: 20px; position: relative; overflow: hidden; border-width: 2px; border-style: solid; }
+        .ticket-card.orange { border-color: #ffcc80; }
+        .ticket-card.green { border-color: #a5d6a7; }
+        .ticket-card::before, .ticket-card::after { content: ''; position: absolute; width: 28px; height: 28px; background-color: var(--bg-color); border-radius: 50%; top: 54%; z-index: 2; border-width: 2px; border-style: solid; }
+        .ticket-card.orange::before, .ticket-card.orange::after { border-color: #ffcc80; }
+        .ticket-card.green::before, .ticket-card.green::after { border-color: #a5d6a7; }
+        .ticket-card::before { left: -16px; }
+        .ticket-card::after { right: -16px; }
+        .ticket-top { padding: 18px 20px; }
+        .ticket-row { display: flex; justify-content: space-between; align-items: center; }
+        .badge-unreserved { background-color: #f3e5f5; color: #9c27b0; padding: 5px 14px; border-radius: 10px; font-size: 13px; font-weight: 800; }
+        .uts-no { font-size: 13px; color: #333; font-weight: 400; }
+        .uts-code { font-weight: 800; }
+        .ticket-divider { border-top: 1.5px dashed; margin: 10px 0; }
+        .orange .ticket-divider { border-color: #ffcc80; }
+        .green .ticket-divider { border-color: #a5d6a7; }
+        .ticket-actions { display: flex; padding: 2px 0; }
+        .action-btn { flex: 1; padding: 14px; text-align: center; color: var(--primary-blue); font-weight: 700; font-size: 15px; cursor: pointer; }
+        .action-divider { width: 1.5px; background-color: #f0f0f0; margin: 8px 0; }
+        .footer-tabs { background: #f4f9ff; display: flex; padding: 10px; justify-content: space-around; border-top: 1px solid #e0e6ed; }
+        .tab { text-align: center; color: #90a4ae; font-size: 11px; font-weight: 600; flex: 1; padding: 8px 4px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .tab img { height: 26px; width: auto; filter: grayscale(100%); opacity: 0.3; }
+        .tab.active-tab { background: white; border-radius: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .active-tab#tab-upcoming { color: var(--ticket-orange); border: 1px solid #ffe0b2; }
+        .active-tab#tab-completed { color: var(--ticket-green); border: 1px solid #c8e6c9; }
+        .active-tab#tab-cancelled { color: #e57373; border: 1px solid #ffcdd2; }
+        .active-tab#tab-all { color: var(--primary-blue); border: 1px solid #bbdefb; }
+        .tab.active-tab img { filter: none; opacity: 1; }
+    </style>
+</head>
+<body>
+
+    <div id="page1" class="screen active p-24">
+        <div class="logo-area"><img src="railone_icon.png" class="logo-img"></div>
+        <div class="login-header">
+            <h2>Login using mPIN</h2>
+            <p id="userNameDisplay">Welcome Raj Wagh!</p>
+            <p style="margin-top: 20px;">Enter mPIN below</p>
+        </div>
+        <div class="pin-container">
+            <input type="password" class="pin-box" maxlength="1">
+            <input type="password" class="pin-box" maxlength="1">
+            <input type="password" class="pin-box" maxlength="1">
+            <input type="password" class="pin-box" maxlength="1">
+            <input type="password" class="pin-box" maxlength="1">
+            <input type="password" class="pin-box" maxlength="1">
+        </div>
+        <div class="links-row"><a href="#">Forgot Password?</a><a href="#">Reset mPIN?</a></div>
+        <div class="divider">Or login using biometric</div>
+        <div class="biometric-row">
+            <div class="bio-icons"><img src="Face_ID_logo.png"><img src="finger_print_icon.png"></div>
+            <button class="btn-login" onclick="showPage('page2')">Login</button>
+        </div>
+        <div class="different-user" onclick="handleDifferentUserClick()">Different User?</div>
+    </div>
+
+    <div id="page2" class="screen page-no-internet p-24">
+        <div class="icon-box"><img src="No_Wifi_ICON.png" class="wifi-icon-img"></div>
+        <h1 class="no-internet-title">No internet connection</h1>
+        <p class="no-internet-sub">Please check your internet connection and try again</p>
+        <button class="btn-blue" onclick="showPage('page1')">Try Again!</button>
+        <button class="btn-outline" onclick="showPage('page3')">
+            <img src="my_booking_BG.png" class="my-bookings-icon"> My Bookings
+        </button>
+    </div>
+
+    <div id="page3" class="screen">
+        <div class="header-blue">
+            <div class="header-left"><div class="back-circle" onclick="showPage('page2')">←</div><span class="header-title">My Bookings</span></div>
+            <img src="sort_icon.png" class="sort-icon">
+        </div>
+        <div class="scroll-area" id="mainScroll"></div>
+        <div class="footer-tabs">
+            <div class="tab active-tab" id="tab-upcoming" onclick="switchTab('upcoming')"><img src="select_upcoming_ticket.png">Upcoming</div>
+            <div class="tab" id="tab-completed" onclick="switchTab('completed')"><img src="select_completed_ticket.png">Completed</div>
+            <div class="tab" id="tab-cancelled" onclick="switchTab('cancelled')"><img src="selected_cancelled_ticket.png">Cancelled</div>
+            <div class="tab" id="tab-all" onclick="switchTab('all')"><img src="select_all_ticket.png">All</div>
+        </div>
+    </div>
+
+<script>
+    let currentUser = "Raj Wagh";
+    let userMobile = "";
+    let station1 = "Kalyan JN.";
+    let station2 = "C Shivaji Mah T";
+    let distance = "54 km";
+    let distClickCount = 0;
+    let userClickCount = 0;
+    let currentTab = 'upcoming';
+
+    function generateUTS() {
+        const d = Math.floor(Math.random() * 10);
+        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        return `X0Q${d}${chars.charAt(Math.floor(Math.random() * 26))}${chars.charAt(Math.floor(Math.random() * 26))}${Math.floor(1000 + Math.random() * 9000)}`;
+    }
+
+    function formatDate(date) {
+        const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        return `${days[date.getDay()]}, ${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear().toString().substr(-2)}`;
+    }
+
+    let upcomingTickets = [];
+    let completedTickets = [];
+
+    function initData() {
+        if(upcomingTickets.length > 0) return;
+        const today = new Date();
+        const yesterday = new Date();
+        yesterday.setDate(today.getDate() - 1);
+        upcomingTickets = [
+            { id: generateUTS(), type: 'RETURN', date: yesterday, color: 'orange' },
+            { id: generateUTS(), type: 'JOURNEY', date: today, color: 'orange' }
+        ];
+        for(let i = 2; i <= 6; i++) {
+            const d = new Date(); d.setDate(today.getDate() - i);
+            completedTickets.push({ id: generateUTS(), type: (i % 2 === 0) ? 'RETURN' : 'JOURNEY', date: d, color: 'green' });
+        }
+    }
+
+    function renderPage() {
+        const container = document.getElementById('mainScroll');
+        container.innerHTML = "";
+        if(currentTab === 'cancelled') { container.innerHTML = '<div class="section-label" style="color:#e57373">Cancelled (0)</div>'; return; }
+        if(currentTab === 'upcoming' || currentTab === 'all') appendSection(container, 'Upcoming', upcomingTickets, '#f9a825');
+        if(currentTab === 'completed' || currentTab === 'all') appendSection(container, 'Completed', completedTickets, '#4caf50');
+    }
+
+    function appendSection(container, label, list, color) {
+        const sectionHeader = document.createElement('div');
+        sectionHeader.className = 'section-label';
+        sectionHeader.style.color = color;
+        sectionHeader.innerHTML = `${label} (${list.length}) ${label === 'Upcoming' ? '<img src="refresh_icon.png" class="refresh-icon">' : ''}`;
+        container.appendChild(sectionHeader);
+        list.forEach(t => {
+            const card = document.createElement('div');
+            card.className = `ticket-card ${t.color}`;
+            card.innerHTML = `
+                <div class="ticket-top">
+                    <div class="ticket-row"><span class="badge-unreserved">Unreserved</span><span class="uts-no">UTS: <span class="uts-code">${t.id}</span></span></div>
+                    <div class="ticket-row" style="margin-top: 18px;">
+                        <div><div style="color:#bdbdbd;font-size:11px;font-weight:500;">Ticket Type</div><div style="font-weight:800;font-size:13px;color:#333;">${t.type}</div></div>
+                        <div style="text-align:right;"><div style="color:#bdbdbd;font-size:11px;font-weight:500;">Booking Date</div><div style="font-weight:800;font-size:13px;color:#333;">${formatDate(t.date)}</div></div>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:18px;">
+                        <span style="font-weight:800;font-size:13px;color:#333;">${station1}</span>
+                        <div style="flex:1;border-bottom:1.5px dashed #e0e0e0;margin:0 12px;position:relative;text-align:center; cursor:pointer" onclick="handleDistClick()">
+                            <span style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:white;padding:0 6px;font-size:11px;color:#bdbdbd;font-weight:500;">${distance}</span>
+                        </div>
+                        <span style="font-weight:800;font-size:13px;color:#333;">${station2}</span>
+                    </div>
+                </div>
+                <div class="ticket-divider"></div>
+                <div class="ticket-actions"><div class="action-btn">Book Again</div><div class="action-divider"></div><div class="action-btn">View Details</div></div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function switchTab(tab) {
+        currentTab = tab;
+        document.querySelectorAll('.tab').forEach(el => el.classList.remove('active-tab'));
+        document.getElementById(`tab-${tab}`).classList.add('active-tab');
+        renderPage();
+    }
+
+    function handleDistClick() {
+        distClickCount++;
+        if(distClickCount === 4) {
+            const s1 = prompt("Enter Station 1:", station1);
+            const s2 = prompt("Enter Station 2:", station2);
+            if(s1 && s2) { station1 = s1; station2 = s2; renderPage(); }
+            distClickCount = 0;
+        }
+    }
+
+    // Updated: Different User 4-click Logic
+    function handleDifferentUserClick() {
+        userClickCount++;
+        if(userClickCount === 4) {
+            const newName = prompt("Enter User Name:", currentUser);
+            if (newName) { 
+                currentUser = newName; 
+                document.getElementById('userNameDisplay').innerText = "Welcome " + currentUser + "!"; 
+            }
+            const newMobile = prompt("Enter Mobile Number:", userMobile);
+            if (newMobile) { userMobile = newMobile; }
+            userClickCount = 0;
+        }
+    }
+
+    function showPage(pageId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+        if(pageId === 'page3') { initData(); renderPage(); }
+    }
+
+    const inputs = document.querySelectorAll('.pin-box');
+    inputs.forEach((input, index) => {
+        input.addEventListener('keyup', (e) => {
+            if (e.target.value.length === 1 && index < inputs.length - 1) { inputs[index+1].focus(); }
+        });
+    });
+
+    initData(); renderPage();
+</script>
+</body>
+</html>
