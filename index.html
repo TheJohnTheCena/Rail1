@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RailOne Dummy App</title>
+	<link rel="manifest" href="manifest.json">
+	<script>
+	  if ('serviceWorker' in navigator) {
+		navigator.serviceWorker.register('sw.js');
+	  }
+	</script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -215,17 +221,16 @@
 		.timer-reel {
 			display: flex;
 			flex-direction: column;
-			/* Slower transition (0.8s) and smoother "S" curve timing */
-			transition: transform 1.2s cubic-bezier(0.85, 0, 0.15, 1); 
 			height: 60px;
+			/* transition is removed from here to prevent racing on load */
+			will-change: transform;
 		}
 
 		.timer-reel span {
-			height: 60px;
-			display: block;
-			text-align: center;
-			min-width: 65px; 
-		}
+    display: block;
+    height: 60px;
+    line-height: 60px;
+}
     </style>
 </head>
 <body>
@@ -335,7 +340,7 @@
                         <div class="via-info">
                             <div>
                                 <div class="label-grey">Via</div>
-                                <div class="via-val">KYN</div>
+                                <div class="via-val">CLA</div>
                             </div>
                             <div class="passenger-type">
                                 Passenger<br>
@@ -354,7 +359,7 @@
                             </div>
                         </div>
 
-                        <div class="class-info-row">SECOND | ORDINARY | RETURN | ₹20.00</div>
+                        <div class="class-info-row" id="classInfoDisplay">FIRST | AC-EMU | JOURNEY | ₹105.00</div>
                         <div class="gst-row">IR:27AAAGM0289C2ZI</div>
 
                         <div class="dashed-line-middle"></div>
@@ -469,125 +474,150 @@
         });
     }
 
-    function openTicketDetails(ticketId) {
-		const allTickets = [...upcomingTickets, ...completedTickets];
-		const ticketData = allTickets.find(t => t.id === ticketId);
-		
-		showPage('page4');
-		startTimer(300);
-		
-		const bDate = ticketData ? ticketData.date : new Date();
-		const formattedDate = formatDate(bDate); 
-		const timeStr = "08:08"; 
-
-		document.getElementById('ticketIdDisplay').innerText = ticketId;
-		document.getElementById('bookingDateTime').innerText = `${formattedDate.split(',')[1].trim()}, ${timeStr}`;
-		
-		const day = ("0" + bDate.getDate()).slice(-2);
-		const month = ("0" + (bDate.getMonth() + 1)).slice(-2);
-		const fullYear = bDate.getFullYear();
-		
-		// Set Booked On with full year
-		document.getElementById('bookedOnDate').innerText = `${day}/${month}/${fullYear} ${timeStr}`;
-		
-		// --- VALIDITY LOGIC START ---
-		let vDate = new Date(bDate);
-		let validityText = "";
-
-		if (ticketData && ticketData.type === 'RETURN') {
-			// Return tickets valid till next day 23:59
-			vDate.setDate(vDate.getDate() + 1);
-			validityText = `Valid for one ret. jrny. till midnight of ${day}/${month}/${fullYear}`;
-		} else {
-			// JOURNEY (Single) tickets valid till SAME day 23:59
-			// vDate stays as bDate
-			validityText = "Valid for one journey within 3 hours";
-    }
-
-    const vDay = ("0" + vDate.getDate()).slice(-2);
-    const vMonth = ("0" + (vDate.getMonth() + 1)).slice(-2);
-    const vYear = vDate.getFullYear();
-
-    document.getElementById('validTillDate').innerText = `${vDay}/${vMonth}/${vYear} 23:59`;
-    document.getElementById('validityFooter').innerText = validityText;
-    // --- VALIDITY LOGIC END ---
+function openTicketDetails(ticketId) {
+    const allTickets = [...upcomingTickets, ...completedTickets];
+    const ticketData = allTickets.find(t => t.id === ticketId);
     
+    showPage('page4');
+    startTimer(300); // This is your 5-minute red countdown
+
+    // 1. Get the actual booking date/time from the ticket
+    const bDate = ticketData ? new Date(ticketData.date) : new Date();
+    
+    // 2. Set a consistent "Booked Time" (e.g., 08:08 as per your screenshot)
+    // If you want the real current time, use bDate.getHours() instead.
+    const bookedHour = 8;
+    const bookedMin = 8;
+    bDate.setHours(bookedHour, bookedMin);
+
+    // Update Header and Welcome Message
+    document.getElementById('ticketIdDisplay').innerText = ticketId;
     document.getElementById('welcomeMsg').innerText = `Thank You ${currentUser || 'Raj Wagh'}, Happy Journey !`;
     document.getElementById('headerMobile').innerText = `Mobile: ${userMobile || '7021948290'}`;
+
+    // --- VALIDITY LOGIC START ---
+    let vDate = new Date(bDate);
+    let validityText = "";
+
+    if (ticketData && ticketData.type === 'RETURN') {
+        vDate.setDate(vDate.getDate() + 1);
+        const vDay = ("0" + vDate.getDate()).slice(-2);
+        const vMonth = ("0" + (vDate.getMonth() + 1)).slice(-2);
+        const vYear = vDate.getFullYear();
+        
+        validityText = `Valid for one ret. jrny. till midnight of ${vDay}/${vMonth}/${vYear}`;
+        document.getElementById('validTillDate').innerText = `${vDay}/${vMonth}/${vYear} 23:59`;
+    } else {
+        // JOURNEY: Adding exactly 1 hour
+        vDate.setHours(vDate.getHours() + 1);
+        
+        const vDay = ("0" + vDate.getDate()).slice(-2);
+        const vMonth = ("0" + (vDate.getMonth() + 1)).slice(-2);
+        const vYear = vDate.getFullYear();
+        const vHours = ("0" + vDate.getHours()).slice(-2);
+        const vMins = ("0" + vDate.getMinutes()).slice(-2);
+        
+        validityText = "*Valid for start of journey within 1 hour or until departure of the first train.";
+        // This line updates the "Valid Till" field to +1 hour (e.g., 09:08)
+        document.getElementById('validTillDate').innerText = `${vDay}/${vMonth}/${vYear} ${vHours}:${vMins}`;
+    }
+
+    document.getElementById('validityFooter').innerText = validityText;
+    // --- VALIDITY LOGIC END ---
+// --- CLASS & PRICE LOGIC START ---
+    const classInfo = document.getElementById('classInfoDisplay');
+    
+    if (ticketData && ticketData.type === 'RETURN') {
+        // Update for Return Ticket
+        classInfo.innerText = "FIRST | AC-EMU | RETURN | ₹210.00";
+    } else {
+        // Update for Journey (Single) Ticket
+        classInfo.innerText = "FIRST | AC-EMU | JOURNEY | ₹105.00";
+    }
+    // --- CLASS & PRICE LOGIC END ---
+
+    // Update the rest of the UI
+    const day = ("0" + bDate.getDate()).slice(-2);
+    const month = ("0" + (bDate.getMonth() + 1)).slice(-2);
+    const timeStr = `${("0" + bookedHour).slice(-2)}:${("0" + bookedMin).slice(-2)}`;
+    
+    document.getElementById('bookingDateTime').innerText = `${formatDate(bDate).split(',')[1].trim()}, ${timeStr}`;
+    document.getElementById('bookedOnDate').innerText = `${day}/${month}/${bDate.getFullYear()} ${timeStr}`;
     document.getElementById('s1Display').innerText = station1.toUpperCase();
     document.getElementById('s2Display').innerText = station2.toUpperCase();
     document.getElementById('distDisplay').innerText = distance;
-	}
+}
 
-		// Function to build the reels only once
-		function buildReels() {
-			const minReel = document.getElementById('min-reel');
-			const secReel = document.getElementById('sec-reel');
+		// 1. Build the reels with numbers 00-60
+function buildReels() {
+    const minReel = document.getElementById('min-reel');
+    const secReel = document.getElementById('sec-reel');
 
-			// Build Minutes (00 to 05)
-			if (minReel.children.length <= 1) {
-				minReel.innerHTML = '';
-				for (let i = 0; i <= 10; i++) {
-					const s = document.createElement('span');
-					s.innerText = i < 10 ? "0" + i : i;
-					minReel.appendChild(s);
-				}
-			}
+    // Build Minutes (00 to 10)
+    if (minReel.children.length <= 1) {
+        minReel.innerHTML = '';
+        for (let i = 0; i <= 10; i++) {
+            const s = document.createElement('span');
+            s.innerText = i < 10 ? "0" + i : i;
+            minReel.appendChild(s);
+        }
+    }
 
-			// Build Seconds (00 to 59)
-			if (secReel.children.length <= 1) {
-				secReel.innerHTML = '';
-				for (let i = 0; i <= 59; i++) {
-					const s = document.createElement('span');
-					s.innerText = i < 10 ? "0" + i : i;
-					secReel.appendChild(s);
-				}
-			}
-		}
+    // Build Seconds (00 to 59)
+    if (secReel.children.length <= 1) {
+        secReel.innerHTML = '';
+        for (let i = 0; i <= 59; i++) {
+            const s = document.createElement('span');
+            s.innerText = i < 10 ? "0" + i : i;
+            secReel.appendChild(s);
+        }
+    }
+}
 
-		function startTimer(duration) {
-			clearInterval(timerInterval);
-			
-			// 1. Pre-build the reels
-			buildReels();
-			
-			let timer = duration;
-			const minReel = document.getElementById('min-reel');
-			const secReel = document.getElementById('sec-reel');
+function startTimer(duration) {
+    clearInterval(timerInterval);
+    buildReels();
+    
+    let timer = duration;
+    const minReel = document.getElementById('min-reel');
+    const secReel = document.getElementById('sec-reel');
 
-			// 2. Disable transition for the very first frame to prevent "racing"
-			minReel.style.transition = 'none';
-			secReel.style.transition = 'none';
+    // 1. HARD RESET: Kill any existing transition and set starting position
+    minReel.style.transition = 'none';
+    secReel.style.transition = 'none';
+    
+    let m = Math.floor(timer / 60);
+    let s = timer % 60;
 
-			// 3. Set initial position (05:00)
-			let minutes = Math.floor(timer / 60);
-			let seconds = timer % 60;
-			minReel.style.transform = `translateY(${minutes * -60}px)`;
-			secReel.style.transform = `translateY(${seconds * -60}px)`;
+    // Set 05:00 instantly
+    minReel.style.transform = `translateY(${m * -60}px)`;
+    secReel.style.transform = `translateY(${s * -60}px)`;
 
-			// 4. Re-enable transition after a tiny delay
-			setTimeout(() => {
-				minReel.style.transition = 'transform 0.8s cubic-bezier(0.85, 0, 0.15, 1)';
-				secReel.style.transition = 'transform 0.8s cubic-bezier(0.85, 0, 0.15, 1)';
-			}, 50);
+    // 2. DELAY ENABLING TRANSITION: 
+    // We wait 100ms to ensure the static position is rendered by the browser
+    setTimeout(() => {
+        minReel.style.transition = 'transform 0.8s cubic-bezier(0.85, 0, 0.15, 1)';
+        secReel.style.transition = 'transform 0.8s cubic-bezier(0.85, 0, 0.15, 1)';
+    }, 100);
 
-			timerInterval = setInterval(function () {
-				if (timer <= 0) {
-					clearInterval(timerInterval);
-					return;
-				}
-				
-				timer--;
-				
-				let m = Math.floor(timer / 60);
-				let s = timer % 60;
+    // 3. START COUNTDOWN
+    timerInterval = setInterval(function () {
+        if (timer <= 0) {
+            clearInterval(timerInterval);
+            return;
+        }
+        
+        timer--;
+        
+        let currentM = Math.floor(timer / 60);
+        let currentS = timer % 60;
 
-				// Slide to the next number
-				minReel.style.transform = `translateY(${m * -60}px)`;
-				secReel.style.transform = `translateY(${s * -60}px)`;
-				
-			}, 1000);
-		}
+        // The reel will now only slide when this line triggers
+        minReel.style.transform = `translateY(${currentM * -60}px)`;
+        secReel.style.transform = `translateY(${currentS * -60}px)`;
+        
+    }, 1000);
+}
     function switchTab(tab) {
         currentTab = tab;
         document.querySelectorAll('.tab').forEach(el => el.classList.remove('active-tab'));
