@@ -21,7 +21,7 @@
         .screen { height: 100vh; width: 100%; display: none; flex-direction: column; box-sizing: border-box; overflow-x: hidden; }
         .active { display: flex; }
 
-        /* PAGE 1, 2, 3 Styles (Kept as provided) */
+        /* PAGE 1, 2, 3 Styles */
         .p-24 { padding: 24px; }
         .logo-area { text-align: center; margin-top: 40px; }
         .logo-img { height: 40px; }
@@ -91,38 +91,73 @@
         /* ========================================= */
         /* PAGE 4 START: TICKET DETAILS STYLES      */
         /* ========================================= */
+        #page4 .scroll-area { background-color: #f2f2f2; }
         .header-share { height: 24px; cursor: pointer; }
-        .welcome-msg { padding: 15px 20px; font-size: 13px; color: #555; }
-        .ticket-outer-container { padding: 0 20px; }
+        .welcome-msg { padding: 15px 20px; font-size: 13px; color: #555; background: white; }
+        .ticket-outer-container { padding: 0 20px; margin-top: 15px; }
         
+        .purple-strip {
+            height: 20px;
+            background-color: #9281e0;
+            width: 100%;
+            margin: 0 auto;
+            border-radius: 10px 10px 0 0;
+			border-top-left-radius: 10px;
+			border-top-right-radius: 10px;
+        }
+        .purple-strip.bottom { border-radius: 0 0 5px 5px; margin-top: -5px;
+			border-bottom-left-radius: 10px;
+			border-bottom-right-radius: 10px;
+			}
+
         .dynamic-ticket-main {
-            background: white;
-            border-radius: 15px;
+            background: black;
+            
             overflow: hidden;
             box-shadow: 0 4px 15px rgba(0,0,0,0.08);
             position: relative;
         }
 
         .ticket-black-header {
-            background: #121212;
+            background-image: url('ticket_background.png');
+            background-size: cover;
+            background-position: center;
             color: white;
-            padding: 20px;
+            padding: 20px 0;
             text-align: center;
             position: relative;
-            background-image: radial-gradient(#222 10%, transparent 10%);
-            background-size: 15px 15px;
+            overflow: hidden;
         }
         
-        /* Side vertical text */
-        .vertical-text-left { position: absolute; left: 10px; top: 50%; transform: translateY(-50%) rotate(-90deg); font-size: 10px; color: #888; white-space: nowrap; font-weight: 700; letter-spacing: 1px; }
-        .vertical-text-right { position: absolute; right: 10px; top: 50%; transform: translateY(-50%) rotate(90deg); font-size: 10px; color: #888; white-space: nowrap; font-weight: 700; letter-spacing: 1px; }
+        /* Vertical text and dotted lines at extreme edges */
+        .vertical-container-left, .vertical-container-right {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .vertical-container-left { left: 0; border-right: 1.5px dashed rgba(255,255,255,0.9); }
+        .vertical-container-right { right: 0; border-left: 1.5px dashed rgba(255,255,255,0.9); }
+
+        .vertical-text {
+            transform: rotate(-90deg);
+            white-space: nowrap;
+            font-size: 11px;
+            font-weight: 700;
+            color: #999999;
+            letter-spacing: 1px;
+        }
+        .vertical-container-right .vertical-text { transform: rotate(-90deg); }
 
         .preview-label { font-size: 14px; font-weight: 600; margin-bottom: 5px; }
         .countdown-timer { font-size: 48px; font-weight: 800; color: #FF3B30; font-family: monospace; line-height: 1; margin: 10px 0; }
         .booking-info-label { font-size: 11px; color: #aaa; margin-top: 15px; }
         .booking-info-val { font-size: 18px; font-weight: 700; color: #FFA000; margin-top: 5px; }
-        .booking-id-small { font-size: 11px; color: #888; margin-top: 5px; }
-        .non-transferable { font-size: 11px; color: #aaa; margin-top: 5px; }
+        .booking-id-small { font-size: 11px; color: #ffffff; margin-top: 5px; }
+        .non-transferable { font-size: 11px; color: #ffffff; margin-top: 5px; }
 
         .ticket-white-body { padding: 25px 20px; background: white; }
         .ticket-id-row { display: flex; justify-content: space-between; margin-bottom: 25px; }
@@ -146,7 +181,7 @@
         .gst-row { font-size: 13px; font-weight: 700; color: #333; }
 
         .dashed-line-middle { border-top: 1.5px dashed #ccc; margin: 20px 0; position: relative; }
-        .dashed-line-middle::before, .dashed-line-middle::after { content: ''; position: absolute; width: 20px; height: 20px; border-radius: 50%; background: var(--bg-color); top: -10px; }
+        .dashed-line-middle::before, .dashed-line-middle::after { content: ''; position: absolute; width: 20px; height: 20px; border-radius: 50%; background: #f2f2f2; top: -10px; }
         .dashed-line-middle::before { left: -30px; }
         .dashed-line-middle::after { right: -30px; }
 
@@ -156,7 +191,41 @@
         .btn-connecting { border: 1.5px solid #0052cc; color: #0052cc; background: white; margin: 0 20px 20px 20px; padding: 12px; border-radius: 25px; font-weight: 700; font-size: 14px; cursor: pointer; text-align: center; }
         .barcode-area { display: flex; justify-content: center; padding-bottom: 30px; }
         .barcode-area img { width: 80%; height: auto; opacity: 0.8; }
-        /* PAGE 4 END */
+
+        /* Info section below QR */
+        .info-footer-section { padding: 20px; text-align: left; line-height: 1.6; }
+        .info-footer-title { color: #000; font-weight: 800; font-size: 14px; margin-bottom: 5px; }
+        .info-footer-text { color: #757575; font-size: 13px; margin-bottom: 15px; }
+		
+		/* Updated container for double digits */
+		.countdown-timer {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			font-size: 48px;
+			font-weight: 800;
+			color: #FF3B30;
+			font-family: monospace;
+			height: 60px; 
+			overflow: hidden; 
+			line-height: 60px;
+			background: transparent;
+		}
+
+		.timer-reel {
+			display: flex;
+			flex-direction: column;
+			/* Slower transition (0.8s) and smoother "S" curve timing */
+			transition: transform 1.2s cubic-bezier(0.85, 0, 0.15, 1); 
+			height: 60px;
+		}
+
+		.timer-reel span {
+			height: 60px;
+			display: block;
+			text-align: center;
+			min-width: 65px; 
+		}
     </style>
 </head>
 <body>
@@ -222,21 +291,31 @@
         </div>
 
         <div class="scroll-area" style="padding: 0;">
-            <div class="welcome-msg" id="welcomeMsg">Thank You Raj Wagh, Happy Journey !</div>
+            <div class="welcome-msg" id="welcomeMsg" style="background: white;">Thank You Raj Wagh, Happy Journey !</div>
             
             <div class="ticket-outer-container">
+                <div class="purple-strip"></div>
                 <div class="dynamic-ticket-main">
                     <div class="ticket-black-header">
-                        <div class="vertical-text-left">INDIAN RAILWAYS</div>
-                        <div class="vertical-text-right">भारतीय रेल</div>
+                        <div class="vertical-container-left">
+                            <div class="vertical-text">INDIAN RAILWAYS</div>
+                        </div>
                         
                         <div class="preview-label">Dynamic preview will close in</div>
-                        <div class="countdown-timer" id="timer">05:00</div>
+                       <div class="countdown-timer">
+						<div id="min-reel" class="timer-reel"><span>05</span></div>
+						<span>:</span>
+						<div id="sec-reel" class="timer-reel"><span>00</span></div>
+					</div>
                         
                         <div class="booking-info-label">Ticket Booking Date & Time</div>
-                        <div class="booking-info-val" id="bookingDateTime">28 Apr 2026, 08:08</div>
+                        <div class="booking-info-val" id="bookingDateTime">-- --- ----, --:--</div>
                         <div class="booking-id-small">R17422</div>
                         <div class="non-transferable">Ticket is Non-Transferable</div>
+
+                        <div class="vertical-container-right">
+                            <div class="vertical-text">भारतीय रेल</div>
+                        </div>
                     </div>
 
                     <div class="ticket-white-body">
@@ -267,7 +346,7 @@
                         <div class="grid-details">
                             <div class="grid-item">
                                 <div class="label-grey">Booked on</div>
-                                <div class="val-black" id="bookedOnDate">28/04/2026 08:08</div>
+                                <div class="val-black" id="bookedOnDate">--/--/---- --:--</div>
                             </div>
                             <div class="grid-item right">
                                 <div class="label-grey">*Valid Till</div>
@@ -282,6 +361,7 @@
                         <div class="validity-bottom-text" id="validityFooter">Valid for one ret. jrny. till midnight of 29/04/2026</div>
                     </div>
                 </div>
+                <div class="purple-strip bottom"></div>
             </div>
 
             <div class="warning-box">
@@ -293,8 +373,18 @@
             <div class="barcode-area">
                 <img src="barcode_sample.png" alt="Barcode">
             </div>
+
+            <div class="info-footer-section">
+                <div class="info-footer-title">Do you know ?</div>
+                <div class="info-footer-text">
+                    IR recovers only 57% of cost of travel on an average<br><br>
+                    This ticket is booked on personal user ID. It's sale/purchase is an offence u/s 143 of the Railways Act, 1989<br><br>
+                    For enquiry and integrated railway helpline, please dial 139.
+                </div>
+            </div>
         </div>
     </div>
+
     <script>
     let currentUser = " ";
     let userMobile = "";
@@ -304,7 +394,7 @@
     let distClickCount = 0;
     let userClickCount = 0;
     let currentTab = 'upcoming';
-    let timerInterval = null; // To manage the 5min timer
+    let timerInterval = null; 
 
     function generateUTS() {
         const d = Math.floor(Math.random() * 10);
@@ -313,11 +403,11 @@
     }
 
     function formatDate(date) {
-        const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        return `${days[date.getDay()]}, ${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear().toString().substr(-2)}`;
-    }
-
+    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    // Changed .substr(-2) to .getFullYear() to show 2026
+    return `${days[date.getDay()]}, ${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+	}
     let upcomingTickets = [];
     let completedTickets = [];
 
@@ -379,44 +469,125 @@
         });
     }
 
-    /* ========================================= */
-    /* PAGE 4 START: TICKET DETAILS LOGIC       */
-    /* ========================================= */
     function openTicketDetails(ticketId) {
-        showPage('page4');
-        startTimer(300); // 5 minutes = 300 seconds
-        
-        // Basic Static UI update for now
-        document.getElementById('ticketIdDisplay').innerText = ticketId;
-        document.getElementById('welcomeMsg').innerText = `Thank You ${currentUser || 'User'}, Happy Journey !`;
-        document.getElementById('headerMobile').innerText = `Mobile: ${userMobile || '7021948290'}`;
-        document.getElementById('s1Display').innerText = station1.toUpperCase();
-        document.getElementById('s2Display').innerText = station2.toUpperCase();
-        document.getElementById('distDisplay').innerText = distance;
+		const allTickets = [...upcomingTickets, ...completedTickets];
+		const ticketData = allTickets.find(t => t.id === ticketId);
+		
+		showPage('page4');
+		startTimer(300);
+		
+		const bDate = ticketData ? ticketData.date : new Date();
+		const formattedDate = formatDate(bDate); 
+		const timeStr = "08:08"; 
+
+		document.getElementById('ticketIdDisplay').innerText = ticketId;
+		document.getElementById('bookingDateTime').innerText = `${formattedDate.split(',')[1].trim()}, ${timeStr}`;
+		
+		const day = ("0" + bDate.getDate()).slice(-2);
+		const month = ("0" + (bDate.getMonth() + 1)).slice(-2);
+		const fullYear = bDate.getFullYear();
+		
+		// Set Booked On with full year
+		document.getElementById('bookedOnDate').innerText = `${day}/${month}/${fullYear} ${timeStr}`;
+		
+		// --- VALIDITY LOGIC START ---
+		let vDate = new Date(bDate);
+		let validityText = "";
+
+		if (ticketData && ticketData.type === 'RETURN') {
+			// Return tickets valid till next day 23:59
+			vDate.setDate(vDate.getDate() + 1);
+			validityText = `Valid for one ret. jrny. till midnight of ${day}/${month}/${fullYear}`;
+		} else {
+			// JOURNEY (Single) tickets valid till SAME day 23:59
+			// vDate stays as bDate
+			validityText = "Valid for one journey within 3 hours";
     }
 
-    function startTimer(duration) {
-        clearInterval(timerInterval);
-        let timer = duration, minutes, seconds;
-        const display = document.getElementById('timer');
-        
-        timerInterval = setInterval(function () {
-            minutes = parseInt(timer / 60, 10);
-            seconds = parseInt(timer % 60, 10);
+    const vDay = ("0" + vDate.getDate()).slice(-2);
+    const vMonth = ("0" + (vDate.getMonth() + 1)).slice(-2);
+    const vYear = vDate.getFullYear();
 
-            minutes = minutes < 10 ? "0" + minutes : minutes;
-            seconds = seconds < 10 ? "0" + seconds : seconds;
+    document.getElementById('validTillDate').innerText = `${vDay}/${vMonth}/${vYear} 23:59`;
+    document.getElementById('validityFooter').innerText = validityText;
+    // --- VALIDITY LOGIC END ---
+    
+    document.getElementById('welcomeMsg').innerText = `Thank You ${currentUser || 'Raj Wagh'}, Happy Journey !`;
+    document.getElementById('headerMobile').innerText = `Mobile: ${userMobile || '7021948290'}`;
+    document.getElementById('s1Display').innerText = station1.toUpperCase();
+    document.getElementById('s2Display').innerText = station2.toUpperCase();
+    document.getElementById('distDisplay').innerText = distance;
+	}
 
-            display.textContent = minutes + ":" + seconds;
+		// Function to build the reels only once
+		function buildReels() {
+			const minReel = document.getElementById('min-reel');
+			const secReel = document.getElementById('sec-reel');
 
-            if (--timer < 0) {
-                clearInterval(timerInterval);
-                display.textContent = "00:00";
-            }
-        }, 1000);
-    }
-    /* PAGE 4 LOGIC END */
+			// Build Minutes (00 to 05)
+			if (minReel.children.length <= 1) {
+				minReel.innerHTML = '';
+				for (let i = 0; i <= 10; i++) {
+					const s = document.createElement('span');
+					s.innerText = i < 10 ? "0" + i : i;
+					minReel.appendChild(s);
+				}
+			}
 
+			// Build Seconds (00 to 59)
+			if (secReel.children.length <= 1) {
+				secReel.innerHTML = '';
+				for (let i = 0; i <= 59; i++) {
+					const s = document.createElement('span');
+					s.innerText = i < 10 ? "0" + i : i;
+					secReel.appendChild(s);
+				}
+			}
+		}
+
+		function startTimer(duration) {
+			clearInterval(timerInterval);
+			
+			// 1. Pre-build the reels
+			buildReels();
+			
+			let timer = duration;
+			const minReel = document.getElementById('min-reel');
+			const secReel = document.getElementById('sec-reel');
+
+			// 2. Disable transition for the very first frame to prevent "racing"
+			minReel.style.transition = 'none';
+			secReel.style.transition = 'none';
+
+			// 3. Set initial position (05:00)
+			let minutes = Math.floor(timer / 60);
+			let seconds = timer % 60;
+			minReel.style.transform = `translateY(${minutes * -60}px)`;
+			secReel.style.transform = `translateY(${seconds * -60}px)`;
+
+			// 4. Re-enable transition after a tiny delay
+			setTimeout(() => {
+				minReel.style.transition = 'transform 0.8s cubic-bezier(0.85, 0, 0.15, 1)';
+				secReel.style.transition = 'transform 0.8s cubic-bezier(0.85, 0, 0.15, 1)';
+			}, 50);
+
+			timerInterval = setInterval(function () {
+				if (timer <= 0) {
+					clearInterval(timerInterval);
+					return;
+				}
+				
+				timer--;
+				
+				let m = Math.floor(timer / 60);
+				let s = timer % 60;
+
+				// Slide to the next number
+				minReel.style.transform = `translateY(${m * -60}px)`;
+				secReel.style.transform = `translateY(${s * -60}px)`;
+				
+			}, 1000);
+		}
     function switchTab(tab) {
         currentTab = tab;
         document.querySelectorAll('.tab').forEach(el => el.classList.remove('active-tab'));
@@ -452,7 +623,6 @@
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(pageId).classList.add('active');
         if(pageId === 'page3') { initData(); renderPage(); clearInterval(timerInterval); }
-        if(pageId === 'page4') { /* logic handled in openTicketDetails */ }
     }
 
     const inputs = document.querySelectorAll('.pin-box');
