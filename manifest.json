@@ -3,12 +3,12 @@
   "name": "RailOne",
   "icons": [
     {
-      "src": "railone_icon.png",
+      "src": "APP_railone_icon.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "APP_railone_icon.png",
+      "src": "railone_icon.png",
       "sizes": "512x512",
       "type": "image/png"
     }
